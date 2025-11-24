@@ -25,10 +25,11 @@ export const useAuthStore = create<AuthState>((set) => ({
             const { data } = await api.get('/me');
             set({ user: data.user, isAuthenticated: true, isLoading: false });
         } catch (error) {
+            console.log('Auth check failed, redirecting to login');
             set({ user: null, isAuthenticated: false, isLoading: false });
         }
     },
-    login: (user) => set({ user, isAuthenticated: true }),
+    login: (user) => set({ user, isAuthenticated: true, isLoading: false }),
     logout: async () => {
         try {
             await api.post('/auth/logout');

@@ -9,13 +9,25 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthStore();
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-purple-600 to-indigo-600">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mb-4"></div>
+        <p className="text-white text-lg">Loading...</p>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -29,8 +41,16 @@ function App() {
   const { checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    // Add timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.log('Auth check timeout, assuming not authenticated');
+      useAuthStore.setState({ isLoading: false, isAuthenticated: false });
+    }, 5000);
+
+    checkAuth().finally(() => clearTimeout(timeout));
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
