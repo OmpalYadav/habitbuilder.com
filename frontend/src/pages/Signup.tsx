@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import api from '../lib/api';
 import { useState } from 'react';
-import { UserPlus, Sparkles } from 'lucide-react';
+import { UserPlus, Sparkles, Mail, Lock, UserCircle } from 'lucide-react';
 
 const signupSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -39,93 +39,111 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 py-12">
-            <div className="max-w-md w-full">
+        <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+            {/* Animated background circles */}
+            <div className="absolute top-20 left-20 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
+            <div className="absolute bottom-20 right-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-40 right-40 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style={{ animationDelay: '4s' }}></div>
+
+            <div className="max-w-md w-full relative z-10">
                 {/* Logo/Brand */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-2 text-white mb-4">
-                        <Sparkles className="w-10 h-10" />
-                        <h1 className="text-4xl font-bold">HabitBuilder</h1>
+                <div className="text-center mb-10 animate-float">
+                    <div className="inline-flex items-center gap-3 text-white mb-6">
+                        <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md animate-glow">
+                            <Sparkles className="w-12 h-12" />
+                        </div>
+                        <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
+                            HabitBuilder
+                        </h1>
                     </div>
-                    <p className="text-white/80 text-lg">Start your transformation today</p>
+                    <p className="text-white/90 text-xl font-light">Start your transformation today</p>
                 </div>
 
                 {/* Signup Card */}
-                <div className="glass rounded-2xl p-8 shadow-2xl">
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-bold text-white mb-2">Create account</h2>
-                        <p className="text-white/70">Join thousands building better habits</p>
+                <div className="glass-strong rounded-3xl p-10 shadow-2xl transform transition-all hover:scale-105 duration-300">
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold text-white mb-3">Create Account</h2>
+                        <p className="text-white/80 text-lg">Join thousands building better habits</p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-500/20 border border-red-500/50 text-white p-3 rounded-lg text-sm mb-4 backdrop-blur">
-                            {error}
+                        <div className="bg-red-500/30 border-2 border-red-400/50 text-white p-4 rounded-xl text-sm mb-6 backdrop-blur-md animate-pulse">
+                            <p className="font-semibold">⚠️ {error}</p>
                         </div>
                     )}
 
-                    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
+                    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                        <div className="relative">
+                            <label htmlFor="name" className="block text-sm font-semibold text-white mb-3">
                                 Full Name
                             </label>
-                            <input
-                                id="name"
-                                type="text"
-                                {...register('name')}
-                                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
-                                placeholder="John Doe"
-                            />
-                            {errors.name && <p className="mt-1 text-sm text-red-300">{errors.name.message}</p>}
+                            <div className="relative">
+                                <UserCircle className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60" size={20} />
+                                <input
+                                    id="name"
+                                    type="text"
+                                    {...register('name')}
+                                    className="w-full pl-12 pr-4 py-4 bg-white/20 border-2 border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-4 focus:ring-white/30 focus:border-white/50 transition-all font-medium"
+                                    placeholder="John Doe"
+                                />
+                            </div>
+                            {errors.name && <p className="mt-2 text-sm text-red-200 font-medium">{errors.name.message}</p>}
                         </div>
 
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
-                                Email address
+                        <div className="relative">
+                            <label htmlFor="email" className="block text-sm font-semibold text-white mb-3">
+                                Email Address
                             </label>
-                            <input
-                                id="email"
-                                type="email"
-                                {...register('email')}
-                                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
-                                placeholder="you@example.com"
-                            />
-                            {errors.email && <p className="mt-1 text-sm text-red-300">{errors.email.message}</p>}
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60" size={20} />
+                                <input
+                                    id="email"
+                                    type="email"
+                                    {...register('email')}
+                                    className="w-full pl-12 pr-4 py-4 bg-white/20 border-2 border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-4 focus:ring-white/30 focus:border-white/50 transition-all font-medium"
+                                    placeholder="you@example.com"
+                                />
+                            </div>
+                            {errors.email && <p className="mt-2 text-sm text-red-200 font-medium">{errors.email.message}</p>}
                         </div>
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+                        <div className="relative">
+                            <label htmlFor="password" className="block text-sm font-semibold text-white mb-3">
                                 Password
                             </label>
-                            <input
-                                id="password"
-                                type="password"
-                                {...register('password')}
-                                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all"
-                                placeholder="••••••••"
-                            />
-                            {errors.password && <p className="mt-1 text-sm text-red-300">{errors.password.message}</p>}
+                            <div className="relative">
+                                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60" size={20} />
+                                <input
+                                    id="password"
+                                    type="password"
+                                    {...register('password')}
+                                    className="w-full pl-12 pr-4 py-4 bg-white/20 border-2 border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-4 focus:ring-white/30 focus:border-white/50 transition-all font-medium"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            {errors.password && <p className="mt-2 text-sm text-red-200 font-medium">{errors.password.message}</p>}
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white text-purple-600 rounded-lg font-semibold hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                            className="w-full flex items-center justify-center gap-3 py-4 px-6 bg-gradient-to-r from-white to-purple-100 text-purple-700 rounded-xl font-bold text-lg hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-white/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 duration-200"
                         >
-                            <UserPlus size={20} />
-                            {loading ? 'Creating account...' : 'Create account'}
+                            <UserPlus size={24} />
+                            {loading ? 'Creating account...' : 'Create Account'}
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center">
-                        <span className="text-white/70">Already have an account? </span>
-                        <Link to="/login" className="text-white font-semibold hover:underline">
+                    <div className="mt-8 text-center">
+                        <span className="text-white/80 text-lg">Already have an account? </span>
+                        <Link to="/login" className="text-white font-bold text-lg hover:underline hover:text-purple-200 transition-colors">
                             Sign in
                         </Link>
                     </div>
                 </div>
 
-                <p className="text-center text-white/50 text-sm mt-8">
-                    © 2025 HabitBuilder. Build your future.
+                <p className="text-center text-white/60 text-sm mt-10 font-light">
+                    © 2025 HabitBuilder. Empowering your future.
                 </p>
             </div>
         </div>
