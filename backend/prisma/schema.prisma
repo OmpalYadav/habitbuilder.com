@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  habits        Habit[]
+  sessions      Session[]
+  habitEntries  HabitEntry[]
+}
+
+model Session {
+  id             String   @id @default(uuid())
+  userId         String
+  refreshTokenHash String
+  userAgent      String?
+  ip             String?
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Habit {
+  id           String       @id @default(uuid())
+  userId       String
+  title        String
+  description  String?
+  scheduleType ScheduleType
+  color        String?
+  icon         String?
+  isPublic     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries      HabitEntry[]
+}
+
+model HabitEntry {
+  id        String      @id @default(uuid())
+  habitId   String
+  userId    String
+  date      DateTime    @db.Date
+  status    EntryStatus
+  notes     String?
+  createdAt DateTime    @default(now())
+  habit     Habit       @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+}
+
+enum ScheduleType {
+  DAILY
+  WEEKLY
+  CUSTOM
+}
+
+enum EntryStatus {
+  DONE
+  SKIPPED
+  PARTIAL
+}
